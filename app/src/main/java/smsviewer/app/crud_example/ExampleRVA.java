@@ -31,7 +31,7 @@ public class ExampleRVA extends RecyclerView.Adapter<ExampleRVA.Holder> {
 
     @Override
     public void onBindViewHolder(@NonNull @NotNull Holder holder, int position) {
-        holder.bind(exampleRepository.getById(position));
+        holder.bind(exampleRepository.getById(position + 1));
     }
 
     @Override

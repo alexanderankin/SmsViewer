@@ -1,65 +1,119 @@
-package smsviewer.app.crud_example;
+package smsviewer.app.crud_example
 
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import androidx.annotation.Nullable;
-import androidx.annotation.NonNull;
-import smsviewer.app.R;
+import android.annotation.SuppressLint
+import android.content.ContentValues
+import android.content.Context
+import android.database.Cursor
+import android.database.sqlite.SQLiteDatabase
+import android.database.sqlite.SQLiteOpenHelper
+import smsviewer.app.R
+import java.text.SimpleDateFormat
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.Date
+import java.util.stream.Collectors
+import java.util.stream.IntStream
 
-public class ExampleRepository extends SQLiteOpenHelper {
+@SuppressLint("SimpleDateFormat")
+val SDF = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+
+/*
+public class ExampleRepository {
+*/
+class ExampleRepository
+    (private val context: Context) :
+    SQLiteOpenHelper(
+        context,
+        "example_db.sqlite",
+        null,
+        1
+    ) {
+    /*
     private final ArrayList<Example> examples = new ArrayList<>();
-    @NonNull
-    private final Context context;
-
-    public ExampleRepository(@NonNull Context context) {
-        super(context, null, null, 1);
-        this.context = context;
-    }
-
+    */
+    /*
     public ExampleRepository addSamples() {
-        examples.addAll(IntStream.range(examples.size(), examples.size() + 3).boxed().map(this::nth).collect(Collectors.toList()));
-        return this;
+    */
+    @Suppress("unused")
+    fun addSamples(): ExampleRepository {
+        val count = count()
+        addAll(IntStream.range(count, count + 3).boxed().map(this::nth).collect(Collectors.toList()))
+        return this
     }
 
-    public Example getById(int id) {
-        getReadableDatabase().rawQuery("select * from example where id = ?", new String[]{id})
-        try {
-            return examples.get(id);
-        } catch (Exception e) {
-            return null;
+    private fun addAll(list: Collection<Example>) {
+        writableDatabase.use { db: SQLiteDatabase ->
+            list.forEach { example: Example -> addOne(example, db) }
         }
     }
 
-    public int count() {
-        return examples.size();
+    private fun addOne(example: Example) {
+        writableDatabase.use { addOne(example, it) }
     }
 
-    public void addNext() {
-        examples.add(
-                nth(examples.size())
-        );
+    private fun addOne(example: Example, db: SQLiteDatabase) {
+        val values = ContentValues()
+        values.put("id", example.getId())
+        values.put("name", example.getName())
+        db.insert("example", null, values)
     }
 
-    private Example nth(int n) {
-        return new Example()
-                .setId(n)
-                .setName("example " + n)
-                .setCreated(new Date());
+    /*
+    public Example getById(int id) {
+    */
+    fun getById(id: Int): Example? {
+        readableDatabase.rawQuery("select * from example where id = ?", arrayOf("$id"))
+            .use { c: Cursor ->
+                if (!c.moveToNext()) return null
+                return readSingle(c)
+            }
     }
 
-    @Override
-    public void onCreate(SQLiteDatabase db) {
-        db.execSQL(context.getString(R.string.example_create_table_sql));
+    private fun readSingle(c: Cursor): Example? {
+        val e = Example()
+        c.getColumnIndex("id")
+            .takeIf { it >= 0 }
+            ?.apply { e.setId(c.getInt(this)) }
+        c.getColumnIndex("name")
+            .takeIf { it >= 0 }
+            ?.apply { e.setName(c.getString(this)) }
+        c.getColumnIndex("created")
+            .takeIf { it >= 0 }
+            ?.apply { e.setCreated(SDF.parse(c.getString(this))) }
+        return e
     }
 
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("drop table example");
+    fun count(): Int {
+        readableDatabase.rawQuery("select count(*) from example", arrayOf())
+            .use {
+                it.moveToNext()
+                return it.getInt(0)
+            }
+    }
+
+    fun addNext() {
+        addOne(nth(count()))
+    }
+
+    private fun nth(n: Int): Example {
+        val npp = n + 1
+        return Example()
+            .setId(npp)
+            .setName("example $npp")
+            .setCreated(Date())
+    }
+
+    override fun onCreate(db: SQLiteDatabase) {
+        db.execSQL("""
+            create table if not exists example
+            (
+                id      integer   not null primary key autoincrement,
+                name    text,
+                created timestamp not null default CURRENT_TIMESTAMP
+            )
+        """.trimIndent())
+    }
+
+    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        db.execSQL("drop table example")
     }
 }
