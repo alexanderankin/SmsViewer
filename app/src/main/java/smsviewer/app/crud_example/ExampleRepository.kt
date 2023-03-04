@@ -6,33 +6,20 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import smsviewer.app.R
 import java.text.SimpleDateFormat
-
-import java.util.Date
+import java.util.*
 import java.util.stream.Collectors
 import java.util.stream.IntStream
 
 @SuppressLint("SimpleDateFormat")
 val SDF = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
-/*
-public class ExampleRepository {
-*/
-class ExampleRepository
-    (private val context: Context) :
-    SQLiteOpenHelper(
-        context,
-        "example_db.sqlite",
-        null,
-        1
-    ) {
-    /*
-    private final ArrayList<Example> examples = new ArrayList<>();
-    */
-    /*
-    public ExampleRepository addSamples() {
-    */
+class ExampleRepository(context: Context) : SQLiteOpenHelper(context,
+    "example_db.sqlite",
+    null,
+    1
+) {
+
     @Suppress("unused")
     fun addSamples(): ExampleRepository {
         val count = count()
@@ -41,9 +28,7 @@ class ExampleRepository
     }
 
     private fun addAll(list: Collection<Example>) {
-        writableDatabase.use { db: SQLiteDatabase ->
-            list.forEach { example: Example -> addOne(example, db) }
-        }
+        writableDatabase.use { list.forEach { e -> addOne(e, it) } }
     }
 
     private fun addOne(example: Example) {
@@ -57,9 +42,6 @@ class ExampleRepository
         db.insert("example", null, values)
     }
 
-    /*
-    public Example getById(int id) {
-    */
     fun getById(id: Int): Example? {
         readableDatabase.rawQuery("select * from example where id = ?", arrayOf("$id"))
             .use { c: Cursor ->
