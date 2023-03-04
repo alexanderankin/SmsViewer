@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">SMS Viewer</string>
+    <string name="browse_examples">Browse Examples</string>
 </resources>
