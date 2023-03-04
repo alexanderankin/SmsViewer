@@ -3,4 +3,14 @@ plugins {
     id 'com.android.application' version '7.3.0' apply false
     id 'com.android.library' version '7.3.0' apply false
     id 'org.jetbrains.kotlin.android' version '1.8.0' apply false
+    id 'org.springframework.boot' version '3.0.4' apply false
+    id 'org.graalvm.buildtools.native' version '0.9.18' apply false
+}
+
+// needs to populate local.properties?
+if (!ext.hasProperty('sdk.dir')) {
+    def sdkHome = file(System.getProperty('user.home')).toPath().resolve('Android').resolve('Sdk').toString()
+
+    ext.set('sdk.dir', sdkHome)
+    file('local.properties').write('sdk.dir=' + sdkHome)
 }
