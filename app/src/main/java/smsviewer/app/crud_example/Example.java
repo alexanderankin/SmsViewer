@@ -1,4 +1,4 @@
-package smsviewer.app.example_crud;
+package smsviewer.app.crud_example;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
