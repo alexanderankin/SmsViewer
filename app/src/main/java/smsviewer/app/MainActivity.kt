@@ -1,4 +1,4 @@
-package com.example.smsviewer
+package smsviewer.app
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

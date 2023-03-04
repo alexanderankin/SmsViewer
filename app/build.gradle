@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.smsviewer'
+    namespace 'smsviewer.app'
     compileSdk 32
 
     defaultConfig {
-        applicationId "com.example.smsviewer"
+        applicationId "info.ankin.smsviewer"
         minSdk 26
         //noinspection OldTargetApi
         targetSdk 32
