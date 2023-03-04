@@ -42,12 +42,27 @@ class ExampleRepository(context: Context) : SQLiteOpenHelper(context,
         db.insert("example", null, values)
     }
 
+    fun delById(id: Int) {
+        writableDatabase.use { it.execSQL("delete from example where id = ?", arrayOf(id)) }
+    }
+
+    fun delNth(n: Int) {
+        getNth(n)?.getId()?.let { delById(it) }
+    }
+
     fun getById(id: Int): Example? {
         readableDatabase.rawQuery("select * from example where id = ?", arrayOf("$id"))
             .use { c: Cursor ->
                 if (!c.moveToNext()) return null
                 return readSingle(c)
             }
+    }
+
+    fun getNth(n: Int): Example? {
+        readableDatabase.use { it.rawQuery("select * from example limit 1 offset ?", arrayOf("$n")).use {
+            if (!it.moveToNext()) return null
+            return readSingle(it)
+        } }
     }
 
     private fun readSingle(c: Cursor): Example? {

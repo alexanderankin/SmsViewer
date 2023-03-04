@@ -18,16 +18,20 @@ class ExamplesActivity : AppCompatActivity() {
 
         if (exampleRepository == null) {
             exampleRepository = ExampleRepository(this)
-            exampleRVA = ExampleRVA(exampleRepository)
+            exampleRVA = ExampleRVA(exampleRepository, this)
         }
 
         val recyclerView: RecyclerView = findViewById(R.id.recycler_view)
         recyclerView.adapter = exampleRVA
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     fun addExample(view: View) {
         exampleRepository?.addNext()
+        notifyDs()
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun notifyDs() {
         exampleRVA?.notifyDataSetChanged()
     }
 }

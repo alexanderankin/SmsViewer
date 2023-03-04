@@ -5,15 +5,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.RecyclerView;
 import org.jetbrains.annotations.NotNull;
 import smsviewer.app.R;
+import smsviewer.app.util.OkCancelFragment;
 
 public class ExampleRVA extends RecyclerView.Adapter<ExampleRVA.Holder> {
     private final ExampleRepository exampleRepository;
+    private final ExamplesActivity examplesActivity;
 
-    public ExampleRVA(ExampleRepository exampleRepository) {
+    public ExampleRVA(ExampleRepository exampleRepository, ExamplesActivity examplesActivity) {
         this.exampleRepository = exampleRepository;
+        this.examplesActivity = examplesActivity;
     }
 
     @NonNull
@@ -31,7 +35,7 @@ public class ExampleRVA extends RecyclerView.Adapter<ExampleRVA.Holder> {
 
     @Override
     public void onBindViewHolder(@NonNull @NotNull Holder holder, int position) {
-        holder.bind(exampleRepository.getById(position + 1));
+        holder.bind(exampleRepository.getNth(position));
     }
 
     @Override
@@ -39,7 +43,7 @@ public class ExampleRVA extends RecyclerView.Adapter<ExampleRVA.Holder> {
         return exampleRepository.count();
     }
 
-    public static class Holder extends RecyclerView.ViewHolder {
+    public class Holder extends RecyclerView.ViewHolder {
         /**
          * the view of this holder
          */
@@ -55,6 +59,15 @@ public class ExampleRVA extends RecyclerView.Adapter<ExampleRVA.Holder> {
         public Holder(@NonNull @NotNull View itemView) {
             super(itemView);
             childView = itemView.findViewById(CHILD_VIEW);
+            itemView.setOnClickListener(this::clicked);
+        }
+
+        private void clicked(View view) {
+            DialogFragment dialog = new OkCancelFragment("Delete Example", "Are you sure you want to delete this example", () -> {
+                exampleRepository.delNth(getAdapterPosition());
+                examplesActivity.notifyDs();
+            }, () -> {});
+            dialog.show(examplesActivity.getSupportFragmentManager(), "OkCancelFragment");
         }
 
         public void bind(Example byId) {
