@@ -27,7 +27,7 @@ class ExampleRepository(context: Context) : SQLiteOpenHelper(context,
         return this
     }
 
-    private fun addAll(list: Collection<Example>) {
+    fun addAll(list: Collection<Example>) {
         writableDatabase.use { list.forEach { e -> addOne(e, it) } }
     }
 
@@ -88,7 +88,7 @@ class ExampleRepository(context: Context) : SQLiteOpenHelper(context,
     }
 
     fun addNext() {
-        addOne(nth(count()))
+        addOne(Example().setName("example " + count()))
     }
 
     private fun nth(n: Int): Example {

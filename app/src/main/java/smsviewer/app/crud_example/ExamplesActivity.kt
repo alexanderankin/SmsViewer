@@ -9,8 +9,8 @@ import smsviewer.app.R
 
 
 class ExamplesActivity : AppCompatActivity() {
-    var exampleRepository: ExampleRepository? = null
-    var exampleRVA: ExampleRVA? = null
+    private var exampleRepository: ExampleRepository? = null
+    private var exampleRVA: ExampleRVA? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
