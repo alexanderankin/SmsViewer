@@ -1,21 +1,18 @@
-// even this doesn't work
-plugins {
-    id 'java'
-}
-
-// this is a fairly standard build generated from start.spring.io
-/*
 plugins {
     id 'java'
     // id 'org.springframework.boot' // version '3.0.4'
     // id 'org.graalvm.buildtools.native' // version '0.9.18'
     id 'org.springframework.boot' version '3.0.4'
-    id 'org.graalvm.buildtools.native' version '0.9.18'
+    // id 'org.graalvm.buildtools.native' version '0.9.18'
 }
 
 group = 'smsviewer.backend'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '17'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
 
 configurations {
     compileOnly {
@@ -47,10 +44,4 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
-}
-*/
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
 }
